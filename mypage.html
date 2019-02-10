@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>My Lang Helper</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+  <script>
+	$(document).ready(function(){
+	  $("form").submit(function(e){
+		$("#msg").hide();
+		$("#status").text("In Progress");
+		$("#status").addClass("alert-warning");
+		$("#status").addClass("remove-success");
+		$("#txtTo").empty();
+
+	    try {
+	       e.preventDefault();
+	      $.post("helper.php",
+			{
+			  lang: $('#dir option:selected').val(),
+			  text: $("#txtFrom").val()
+			},
+			function(data,status){
+			  
+			  console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+			  text: $("#txtTo").val(data.text[0])
+			  $("#status").text("Done");
+			  $("#status").removeClass("alert-warning");
+			  $("#status").addClass("alert-success");
+			},
+			"json"
+			);
+			
+			
+		}catch(e){
+		    var errMsg = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
+			console.log(errMsg);
+			$("#msg").text(errMsg);
+			$("#msg").show();
+		}
+	  });
+	});
+</script>
+</head>
+<body>
+
+<div class="container">
+  <h1>Translator</h1>
+ 
+  <form method="post">
+  <div class="form-group">
+    <div class="form-group">
+  <label for="sel1">Select direction:</label>
+  <select class="form-control" id="dir">
+    <option value="ru-en">Ru->En</option>
+    <option value="en-ru">En->Ru</option>
+  </select>
+  <div class="alert" id='status'></div>
+</div>
+	<label for="txtFrom">Исходный текст:</label>
+	<textarea class="form-control" rows="5" id="txtFrom">Привет? 
+	как дела? 
+	Чем занимаешься?</textarea>
+   </div>
+   <div class="form-group">
+	<label for="txtTo">Перевод:</label>
+	<textarea class="form-control" rows="5" id="txtTo"></textarea>
+   </div>
+   <div id="msg" class="alert alert-danger" style="display:none"></div>
+  <button type="submit" class="btn btn-primary">Перевести</button>
+</form>
+</div>
+
+</body>
+</html>
