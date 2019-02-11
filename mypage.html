@@ -18,27 +18,30 @@
 		$("#txtTo").empty();
 
 	    try {
-	       e.preventDefault();
-	      $.post("helper.php",
-			{
-			  lang: $('#dir option:selected').val(),
-			  text: $("#txtFrom").val()
-			},
-			function(data,status){
-			  
-			  console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-			  text: $("#txtTo").val(data.text[0])
-			  $("#status").text("Done");
-			  $("#status").removeClass("alert-warning");
-			  $("#status").addClass("alert-success");
-			},
-			"json"
+			e.preventDefault();
+			$.post(
+				"helper.php",
+				{
+				  lang: $('#dir option:selected').val(),
+				  text: $("#txtFrom").val()
+				},
+				function(data, status) {
+					//console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+					if (data.text) {
+						$("#txtTo").val(data.text[0]);
+					} else {				
+						$("#msg").text('Server response: ' + JSON.stringify(data));
+						$("#msg").show();
+					}
+					$("#status").text("Done");
+					$("#status").removeClass("alert-warning");
+					$("#status").addClass("alert-success");
+				},
+				"json"
 			);
-			
-			
 		}catch(e){
 		    var errMsg = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
-			console.log(errMsg);
+			//console.log(errMsg);
 			$("#msg").text(errMsg);
 			$("#msg").show();
 		}
